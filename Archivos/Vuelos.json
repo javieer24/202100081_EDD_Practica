@@ -1,0 +1,29 @@
+[
+    {
+        "vuelo": "Alee",
+        "numero_de_registro": "N12345",
+        "modelo":"Boeing 737",
+        "fabricante": "Boeing" ,
+        "ano_fabricacion": 2015,
+        "capacidad" :180,
+        "peso_max_despegue": 79000,
+        "aerolinea": "Airlinex",
+        "estado": "Disponible"
+
+    },
+
+    {
+        "vuelo": "A102",
+        "numero_de_registro": "A54321",
+        "modelo":"Arbius A320",
+        "fabricante": "Arbius" ,
+        "ano_fabricacion": 2018,
+        "capacidad" :150,
+        "peso_max_despegue": 77000,
+        "aerolinea": "AirlineY",
+        "estado": "Disponible"
+
+    }
+
+
+]
