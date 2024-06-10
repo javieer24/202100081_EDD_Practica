@@ -23,7 +23,7 @@ public:
         } while (actual != cabeza);
     }
 
-    void agregar(T dato) {
+    void insertar(T dato) {  // Cambié agregar a insertar
         Nodo<T>* nuevo = new Nodo<T>(dato);
         if (!cabeza) {
             cabeza = cola = nuevo;
@@ -77,6 +77,10 @@ public:
             actual = actual->siguiente;
         } while (actual != cabeza);
         std::cout << std::endl;
+    }
+
+    Nodo<T>* obtenerCabeza() const {  // Agregado para obtener la cabeza
+        return cabeza;
     }
 };
 

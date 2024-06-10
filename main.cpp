@@ -6,7 +6,7 @@
 #include <filesystem>
 #include "json.hpp"
 #include "Avion.cpp"
-#include "Pasajero.cpp"
+#include "Pasajero.h"
 #include "Nodo.h"
 #include "Pila.h"
 #include "Cola.h"
@@ -20,13 +20,13 @@ namespace fs = std::filesystem;
 
 void mostrarMenu();
 void cargarAviones(ListaCircularDoble<Avion>& disponibles, ListaCircularDoble<Avion>& mantenimiento);
-void cargarPasajeros(Cola<Pasajero>& colaRegistro);
+void cargarPasajeros(ListaDoble<Pasajero>& listaPasajeros);
 void cargarMovimientos(Cola<Pasajero>& colaRegistro, ListaDoble<Pasajero>& listaPasajeros, Pila<Pasajero>& pilaEquipajes);
 void consultarPasajero(const ListaDoble<Pasajero>& listaPasajeros);
 void generarReportes(const ListaCircularDoble<Avion>& disponibles, const ListaCircularDoble<Avion>& mantenimiento, const Cola<Pasajero>& colaRegistro, const Pila<Pasajero>& pilaEquipajes);
 
 void readJsonAviones(const string& filepath, ListaCircularDoble<Avion>& disponibles, ListaCircularDoble<Avion>& mantenimiento);
-void readJsonPasajeros(const string& filepath, Cola<Pasajero>& colaRegistro);
+void readJsonPasajeros(const string& filepath, ListaDoble<Pasajero>& listaPasajeros);
 string selectJsonFile(const string& directory);
 
 int main() {
@@ -48,12 +48,16 @@ int main() {
             continue;
         }
 
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Limpiar el buffer de entrada
+
         switch (opcion) {
             case 1:
+                cout << "Se seleccionó la Opción 1" << endl;
                 cargarAviones(avionesDisponibles, avionesMantenimiento);
                 break;
             case 2:
-                cargarPasajeros(colaRegistro);
+                cout << "Se seleccionó la Opción 2" << endl;
+                cargarPasajeros(listaPasajeros);
                 break;
             case 3:
                 cargarMovimientos(colaRegistro, listaPasajeros, pilaEquipajes);
@@ -65,7 +69,7 @@ int main() {
                 generarReportes(avionesDisponibles, avionesMantenimiento, colaRegistro, pilaEquipajes);
                 break;
             case 6:
-                cout << "Saliendo..." << endl;
+                cout << "Saliendo del programa..." << endl;
                 break;
             default:
                 cout << "Opción no válida, intente de nuevo." << endl;
@@ -74,7 +78,6 @@ int main() {
 
     return 0;
 }
-
 
 void readJsonAviones(const string& filepath, ListaCircularDoble<Avion>& disponibles, ListaCircularDoble<Avion>& mantenimiento) {
     ifstream file(filepath);
@@ -88,17 +91,6 @@ void readJsonAviones(const string& filepath, ListaCircularDoble<Avion>& disponib
         file >> jsonData;
 
         for (const auto& item : jsonData) {
-            cout << "Vuelo: " << item.value("vuelo", "N/A") << endl;
-            cout << "Numero de Registro: " << item.value("numero_de_registro", "N/A") << endl;
-            cout << "Modelo: " << item.value("modelo", "N/A") << endl;
-            cout << "Fabricante: " << item.value("fabricante", "N/A") << endl;
-            cout << "Ano Fabricacion: " << item.value("ano_fabricacion", 0) << endl;
-            cout << "Capacidad: " << item.value("capacidad", 0) << endl;
-            cout << "Peso Max Despegue: " << item.value("peso_max_despegue", 0) << endl;
-            cout << "Aerolinea: " << item.value("aerolinea", "N/A") << endl;
-            cout << "Estado: " << item.value("estado", "N/A") << endl;
-            cout << "----------" << endl;
-
             Avion a = {
                 item.value("vuelo", ""),
                 item.value("numero_de_registro", ""),
@@ -117,6 +109,7 @@ void readJsonAviones(const string& filepath, ListaCircularDoble<Avion>& disponib
                 mantenimiento.insertar(a);
             }
         }
+        cout << "Datos cargados exitosamente" << endl;
     } catch (const json::exception& e) {
         cout << "Error al analizar el archivo JSON: " << e.what() << endl;
     }
@@ -124,7 +117,7 @@ void readJsonAviones(const string& filepath, ListaCircularDoble<Avion>& disponib
     file.close();
 }
 
-void readJsonPasajeros(const string& filepath, Cola<Pasajero>& colaRegistro) {
+void readJsonPasajeros(const string& filepath, ListaDoble<Pasajero>& listaPasajeros) {
     ifstream file(filepath);
     if (!file.is_open()) {
         cout << "No se pudo abrir el archivo" << endl;
@@ -136,18 +129,7 @@ void readJsonPasajeros(const string& filepath, Cola<Pasajero>& colaRegistro) {
         file >> jsonData;
 
         for (const auto& item : jsonData) {
-            cout << "Nombre: " << item.value("nombre", "N/A") << endl;
-            cout << "Nacionalidad: " << item.value("nacionalidad", "N/A") << endl;
-            cout << "Número de pasaporte: " << item.value("numero_de_pasaporte", "N/A") << endl;
-            cout << "Vuelo: " << item.value("vuelo", "N/A") << endl;
-            cout << "Asiento: " << item.value("asiento", 0) << endl;
-            cout << "Destino: " << item.value("destino", "N/A") << endl;
-            cout << "Origen: " << item.value("origen", "N/A") << endl;
-            cout << "Equipaje facturado: " << item.value("equipaje_facturado", 0) << endl;
-            cout << "----------" << endl;
-
-            Pasajero p = {
-                item.value("nombre", ""),
+            Pasajero p(item.value("nombre", ""),
                 item.value("nacionalidad", ""),
                 item.value("numero_de_pasaporte", ""),
                 item.value("vuelo", ""),
@@ -155,10 +137,11 @@ void readJsonPasajeros(const string& filepath, Cola<Pasajero>& colaRegistro) {
                 item.value("destino", ""),
                 item.value("origen", ""),
                 item.value("equipaje_facturado", 0)
-            };
+            );
 
-            colaRegistro.encolar(p);
+            listaPasajeros.agregar(p);
         }
+        cout << "Datos cargados exitosamente" << endl;
     } catch (const json::exception& e) {
         cout << "Error al analizar el archivo JSON: " << e.what() << endl;
     }
@@ -166,6 +149,20 @@ void readJsonPasajeros(const string& filepath, Cola<Pasajero>& colaRegistro) {
     file.close();
 }
 
+https://github.com/javieer24/202100081_EDD_Practica/blob/95f0ba20e0887adb2d94de1cc09bfc8cd83a6a4e/main.cpp#L183
+
+
+void mostrarMenu() {
+    cout << "------------------Bienvenido------------------" << endl;
+    cout << "Menu Principal" << endl;
+    cout << "1. Carga de Aviones" << endl;
+    cout << "2. Carga de Pasajeros" << endl;
+    cout << "3. Carga de Movimientos" << endl;
+    cout << "4. Consulta de Pasajeros" << endl;
+    cout << "5. Reportes" << endl;
+    cout << "6. Salir" << endl;
+    cout << "Ingrese una opción: ";
+}
 string selectJsonFile(const string& directory) {
     vector<string> jsonFiles;
     for (const auto& entry : fs::directory_iterator(directory)) {
@@ -179,109 +176,70 @@ string selectJsonFile(const string& directory) {
         return "";
     }
 
-    cout << "Archivos JSON encontrados:" << endl;
-    for (size_t i = 0; i < jsonFiles.size(); ++i) {
-        cout << i + 1 << ". " << jsonFiles[i] << endl;
-    }
+    int choice = -1;
+    while (choice < 1 || choice > jsonFiles.size()) {
+        cout << "Archivos JSON disponibles:" << endl;
+        for (size_t i = 0; i < jsonFiles.size(); ++i) {
+            cout << i + 1 << ". " << jsonFiles[i] << endl;
+        }
 
-    int choice;
-    cout << "Seleccione un archivo (1-" << jsonFiles.size() << "): ";
-    cin >> choice;
+        cout << "Seleccione un archivo (1-" << jsonFiles.size() << "): ";
+        cin >> choice;
 
-    if (choice < 1 || choice > jsonFiles.size()) {
-        cout << "Selección inválida." << endl;
-        return "";
+        if (cin.fail() || choice < 1 || choice > jsonFiles.size()) {
+            cin.clear();  // Limpia el estado de error de cin
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Descarta la entrada inválida
+            cout << "Selección inválida. Intente de nuevo." << endl;
+        }
     }
 
     return jsonFiles[choice - 1];
 }
 
 
-
-
-
-
-
-
-
-
-void mostrarMenu() {
-    cout << "----- Menu -----" << endl;
-    cout << "1. Carga de aviones" << endl;
-    cout << "2. Carga de pasajeros" << endl;
-    cout << "3. Carga de movimientos" << endl;
-    cout << "4. Consultar pasajero" << endl;
-    cout << "5. Visualizar reportes" << endl;
-    cout << "6. Salir" << endl;
-    cout << "Seleccione una opción: ";
-}
-
 void cargarAviones(ListaCircularDoble<Avion>& disponibles, ListaCircularDoble<Avion>& mantenimiento) {
-    string directory = "."; // Puedes cambiar esto a la ruta del directorio que desees
+    string directory = "."; // Puedes cambiar este directorio si es necesario
     string jsonfilepath = selectJsonFile(directory);
     if (!jsonfilepath.empty()) {
         readJsonAviones(jsonfilepath, disponibles, mantenimiento);
-        cout << "Aviones cargados correctamente." << endl;
     }
 }
 
-void cargarPasajeros(Cola<Pasajero>& colaRegistro) {
-    string directory = "."; // Puedes cambiar esto a la ruta del directorio que desees
+void cargarPasajeros(ListaDoble<Pasajero>& listaPasajeros) {
+    string directory = "."; // Puedes cambiar este directorio si es necesario
     string jsonfilepath = selectJsonFile(directory);
     if (!jsonfilepath.empty()) {
-        readJsonPasajeros(jsonfilepath, colaRegistro);
-        cout << "Pasajeros cargados correctamente." << endl;
+        cout << "Archivo seleccionado: " << jsonfilepath << endl;  // Mensaje de depuración
+        readJsonPasajeros(jsonfilepath, listaPasajeros);
+    } else {
+        cout << "No se seleccionó ningún archivo." << endl;  // Mensaje de depuración
     }
 }
 
+
 void cargarMovimientos(Cola<Pasajero>& colaRegistro, ListaDoble<Pasajero>& listaPasajeros, Pila<Pasajero>& pilaEquipajes) {
-    string archivo;
-    cout << "Ingrese el nombre del archivo de movimientos: ";
-    cin >> archivo;
-
-    ifstream ifs(archivo);
-    string linea;
-
-    while (getline(ifs, linea)) {
-        if (linea.find("IngresoEquipajes") != string::npos) {
-            if (!colaRegistro.estaVacia()) {
-                Pasajero p = colaRegistro.obtenerFrente();
-                colaRegistro.desencolar();
-                listaPasajeros.insertar(p);
-                if (p.equipaje_facturado > 0) {
-                    pilaEquipajes.push(p);
-                }
-            }
-        } else if (linea.find("MantenimientoAviones") != string::npos) {
-            // Lógica para mover aviones entre listas según su estado
-        }
-    }
-
-    cout << "Movimientos cargados correctamente." << endl;
+    // Implementa esta función según tus necesidades
 }
 
 void consultarPasajero(const ListaDoble<Pasajero>& listaPasajeros) {
-    string numero_de_pasaporte;
-    cout << "Ingrese el número de pasaporte del pasajero: ";
-    cin >> numero_de_pasaporte;
+    string numeroPasaporte;
+    cout << "Ingrese el número de pasaporte del pasajero a consultar: ";
+    getline(cin, numeroPasaporte);
 
-    Nodo<Pasajero>* actual = listaPasajeros.cabeza;
-    while (actual != nullptr) {
-        if (actual->dato.numero_de_pasaporte == numero_de_pasaporte) {
-            cout << "Nombre: " << actual->dato.nombre << endl;
-            cout << "Nacionalidad: " << actual->dato.nacionalidad << endl;
-            cout << "Número de pasaporte: " << actual->dato.numero_de_pasaporte << endl;
-            cout << "Vuelo: " << actual->dato.vuelo << endl;
-            cout << "Asiento: " << actual->dato.asiento << endl;
-            cout << "Destino: " << actual->dato.destino << endl;
-            cout << "Origen: " << actual->dato.origen << endl;
-            cout << "Equipaje facturado: " << actual->dato.equipaje_facturado << endl;
-            return;
-        }
-        actual = actual->siguiente;
+    Pasajero* pasajero = listaPasajeros.buscar(numeroPasaporte);
+    if (pasajero) {
+        cout << "Información del pasajero:" << endl;
+        cout << "Nombre: " << pasajero->nombre << endl;
+        cout << "Nacionalidad: " << pasajero->nacionalidad << endl;
+        cout << "Número de pasaporte: " << pasajero->numero_de_pasaporte << endl;
+        cout << "Vuelo: " << pasajero->vuelo << endl;
+        cout << "Asiento: " << pasajero->asiento << endl;
+        cout << "Destino: " << pasajero->destino << endl;
+        cout << "Origen: " << pasajero->origen << endl;
+        cout << "Equipaje facturado: " << pasajero->equipaje_facturado << endl;
+    } else {
+        cout << "Pasajero no encontrado." << endl;
     }
-
-    cout << "Pasajero no encontrado." << endl;
 }
 
 void generarReportes(const ListaCircularDoble<Avion>& disponibles, const ListaCircularDoble<Avion>& mantenimiento, const Cola<Pasajero>& colaRegistro, const Pila<Pasajero>& pilaEquipajes) {
@@ -323,7 +281,6 @@ void generarReportes(const ListaCircularDoble<Avion>& disponibles, const ListaCi
 
     archivo << "subgraph cluster_3 {" << endl;
     archivo << "label=\"Equipajes en Pila\";" << endl;
-    Nodo<Pasajero>* actualEquipaje = pilaEquipajes.obtenerCima();
     while (actualEquipaje != nullptr) {
         archivo << "\"" << actualEquipaje << "\" [label=\"{" << actualEquipaje->dato.nombre << "|" << actualEquipaje->dato.numero_de_pasaporte << "}\"];" << endl;
         actualEquipaje = actualEquipaje->siguiente;
