@@ -4,64 +4,68 @@
 #include <limits>
 #include "json.hpp"
 #include <filesystem>
+#include <vector>
 
 using namespace std;
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
-// Function for the main menu
+// funcion para mostrar el menu
 int Menu();
 
-// Function to read JSON file
-void readJson(const string& filepath);
+// funcion para leer el archivo JSON de aviones
+void readJsonAvion(const string& filepath);
 
-// Function to display available JSON files and let the user select one
+// funcion para leer el archivo JSON de pasajeros
+void readJsonPasajeros(const string& filepath);
+
+// funcion para seleccionar un archivo JSON
 string selectJsonFile(const string& directory);
 
 int main() {
-    int input; // Variable to store the user's choice
+    int input; // Variable para almacenar la opcion del menu
 
     while (true) {
-        Menu();
-        cin >> input;
+        input = Menu();
 
-        // Error handling
+        // Correccion de errores
         if (cin.fail() || input < 1 || input > 6) {
-            cin.clear(); // Clear the error flag
+            cin.clear(); // Bandera de error
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Entrada invalida. Por favor, ingrese un número del 1 al 6." << endl;
+            cout << "Invalid input. Please enter a number from 1 to 6." << endl;
             continue;
         }
 
         switch (input) {
             case 1: {
-                string directory = "."; // You can change this to the desired directory path
+                string directory = "."; // Cambiar a la direccion deseada
                 string jsonfilepath = selectJsonFile(directory);
+                cout << "Datos cargados exitosamente" << endl;
+                cout << "Leyendo el archivo json..." << endl;
                 if (!jsonfilepath.empty()) {
-                    readJson(jsonfilepath);
-                    cout << "Datos cargados exitosamente" << endl;
-                    cout << "Leyendo el archivo json..." << endl;
+                    readJsonAvion(jsonfilepath);
                 }
                 break;
             }
             case 2: {
-                string directory = "."; // You can change this to the desired directory path
+                string directory = "."; // Cambiar a la direccion deseada
                 string jsonfilepath = selectJsonFile(directory);
-                if (!jsonfilepath.empty()) {
-                    readJson(jsonfilepath);
                     cout << "Datos cargados exitosamente" << endl;
                     cout << "Leyendo el archivo json..." << endl;
+                if (!jsonfilepath.empty()) {
+                    readJsonPasajeros(jsonfilepath);
+
                 }
                 break;
             }
             case 3:
-                cout << "Se seleccionó la Opción 3" << endl;
+                cout << "Se seleccionó la Opción 3." << endl;
                 break;
             case 4:
-                cout << "Se seleccionó la Opción 4" << endl;
+                cout << "Se seleccionó la Opción 4." << endl;
                 break;
             case 5:
-                cout << "Se seleccionó la Opción 5" << endl;
+                cout << "Se seleccionó la Opción 5." << endl;
                 break;
             case 6:
                 cout << "Saliendo del programa..." << endl;
@@ -69,45 +73,78 @@ int main() {
         }
     }
 
-    return 0; // This line was missing in the original code
+    return 0;
 }
 
-void readJson(const string& filepath) {
+void readJsonAvion(const string& filepath) {
     // Open the JSON file
     ifstream file(filepath);
     if (!file.is_open()) {
-        cout << "No se pudo abrir el archivo" << endl;
+        cout << "Could not open the file." << endl;
         return;
     }
 
     try {
-        // Parse the JSON file
+        // Parseo del archivo JSON
         json jsonData;
         file >> jsonData;
 
-        // Access the data
+        // Acceso a los datos
         for (const auto& item : jsonData) {
             cout << "Vuelo: " << item.value("vuelo", "N/A") << endl;
             cout << "Numero de Registro: " << item.value("numero_de_registro", "N/A") << endl;
             cout << "Modelo: " << item.value("modelo", "N/A") << endl;
             cout << "Fabricante: " << item.value("fabricante", "N/A") << endl;
-            cout << "Ano Fabricacion: " << item.value("ano_fabricacion", 0) << endl;
+            cout << "Año de Fabricacion: " << item.value("ano_fabricacion", 0) << endl;
             cout << "Capacidad: " << item.value("capacidad", 0) << endl;
             cout << "Peso Max Despegue: " << item.value("peso_max_despegue", 0) << endl;
-            cout << "Aerolinea: " << item.value("aerolinea", "N/A") << endl;
+            cout << "Aerolina: " << item.value("aerolinea", "N/A") << endl;
             cout << "Estado: " << item.value("estado", "N/A") << endl;
             cout << "----------" << endl;
         }
 
     } catch (const json::exception& e) {
-        cout << "Error al analizar el archivo JSON: " << e.what() << endl;
+        cout << "Error parsing the JSON file: " << e.what() << endl;
     }
 
-    file.close();  // Close the file after reading
+    file.close();  // Se cierra el archivo después de leerlo
 }
 
-int Menu(){
-cout << "|                                                              |" << endl;
+void readJsonPasajeros(const string& filepath) {
+    // Se abre el archivo JSON
+    ifstream file(filepath);
+    if (!file.is_open()) {
+        cout << "Could not open the file." << endl;
+        return;
+    }
+
+    try {
+        // Parseo del archivo JSON
+        json jsonData;
+        file >> jsonData;
+
+        // Access the data
+        for (const auto& item : jsonData) {
+            cout << "Nombre: " << item.value("nombre", "N/A") << endl;
+            cout << "Nacionalidad: " << item.value("nacionalidad", "N/A") << endl;
+            cout << "Numero de Pasaporte: " << item.value("numero_de_pasaporte", "N/A") << endl;
+            cout << "Vuelo: " << item.value("vuelo", "N/A") << endl; // Changed from number to string
+            cout << "Asiento: " << item.value("asiento", "N/A") << endl;
+            cout << "Destino: " << item.value("destino", "N/A") << endl; // Changed from number to string
+            cout << "Origen: " << item.value("origen", "N/A") << endl;
+            cout << "Equipaje Facturado: " << item.value("equipaje_facturado", 0) << endl;
+            cout << "----------" << endl;
+        }
+
+    } catch (const json::exception& e) {
+        cout << "Error parsing the JSON file: " << e.what() << endl;
+    }
+
+    file.close();  // Cierra el archivo después de leerlo
+}
+
+int Menu() {
+    cout << "|                                                              |" << endl;
     cout << "|                    Bienvenido al Menu Principal              |" << endl;
     cout << "|                                                              |" << endl;
     cout << "|-------------------------------------------------------------+" << endl;
@@ -124,7 +161,10 @@ cout << "|                                                              |" << en
     cout << "| Ingrese una opcion:                                          |" << endl;
     cout << "|                                                              |" << endl;
     cout << "+-------------------------------------------------------------+" << endl;
-    return 0;
+    
+    int choice;
+    cin >> choice;
+    return choice;
 }
 
 string selectJsonFile(const string& directory) {
@@ -146,7 +186,7 @@ string selectJsonFile(const string& directory) {
     }
 
     int choice;
-    cout << "Seleccione un archivo (1-" << jsonFiles.size() << "): ";
+    cout << "Seleccione un archivo  (1-" << jsonFiles.size() << "): ";
     cin >> choice;
 
     // Error handling
