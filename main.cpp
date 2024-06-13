@@ -129,7 +129,7 @@ void readJsonPasajeros(const string& filepath) {
             cout << "Nacionalidad: " << item.value("nacionalidad", "N/A") << endl;
             cout << "Numero de Pasaporte: " << item.value("numero_de_pasaporte", "N/A") << endl;
             cout << "Vuelo: " << item.value("vuelo", "N/A") << endl; // Changed from number to string
-            cout << "Asiento: " << item.value("asiento", "N/A") << endl;
+            cout << "Asiento: " << item.value("asiento", 0) << endl;
             cout << "Destino: " << item.value("destino", "N/A") << endl; // Changed from number to string
             cout << "Origen: " << item.value("origen", "N/A") << endl;
             cout << "Equipaje Facturado: " << item.value("equipaje_facturado", 0) << endl;
