@@ -5,10 +5,32 @@
 #include "json.hpp"
 #include <filesystem>
 #include <vector>
+#include "CircularDoubleList.h"
+#include "CircularList.h"
+#include "DoubleLinkedList.h"
+#include "Airplane.h"
+#include "Passenger.h"
+#include "Queue.h"
+#include "Stack.h"
+
+
+
 
 using namespace std;
 using json = nlohmann::json;
 namespace fs = std::filesystem;
+
+
+//Variables globales
+CircularDoubleList<Airplane> ListaAvionesDisponibles;
+CircularDoubleList<Airplane> ListaAvionesMantenimiento;
+DoubleLinkedList<Passenger> ListaEquipajeFacturado;
+Queue<Passenger> ColaPasajeros;
+Stack<Passenger> EquipajePasajeros;
+
+
+
+
 
 // funcion para mostrar el menu
 int Menu();
@@ -142,6 +164,14 @@ void readJsonPasajeros(const string& filepath) {
 
     file.close();  // Cierra el archivo después de leerlo
 }
+
+
+
+
+
+
+
+
 
 int Menu() {
     cout << "|                                                              |" << endl;
