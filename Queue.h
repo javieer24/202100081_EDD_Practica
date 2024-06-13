@@ -18,7 +18,7 @@ private:
 
     Node* front;
     Node* rear;
-    int size;
+    int size = 0;
 
 public:
     // Constructor

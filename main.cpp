@@ -43,6 +43,7 @@ void readJsonPasajeros(const string& filepath);
 
 // funcion para seleccionar un archivo JSON
 string selectJsonFile(const string& directory);
+string selectTxtFile(const string& directory);
 
 void readmovimientos();
 void consultar_pasajero();
@@ -65,7 +66,7 @@ int main() {
 
         switch (input) {
             case 1: {
-                cout << "Se seleccionó la Opcion 1." << endl;
+                cout << "Se selecciono la Opcion 1." << endl;
                 string directory = "."; // Cambiar a la direccion deseada
                 string jsonfilepath = selectJsonFile(directory);
                 cout << "Datos cargados exitosamente" << endl;
@@ -76,7 +77,7 @@ int main() {
                 break;
             }
             case 2: {
-                cout << "Se seleccionó la Opcion 2." << endl;
+                cout << "Se selecciono la Opcion 2." << endl;
                 string directory = "."; // Cambiar a la direccion deseada
                 string jsonfilepath = selectJsonFile(directory);
                     cout << "Datos cargados exitosamente" << endl;
@@ -88,7 +89,7 @@ int main() {
                 break;
             }
             case 3:
-                cout << "Se seleccionó la Opcion 3." << endl;
+                cout << "Se selecciono la Opcion 3." << endl;
                 readmovimientos();
 
                 break;
@@ -97,7 +98,7 @@ int main() {
                 consultar_pasajero();   
                 break;
             case 5:
-                cout << "Se seleccionó la Opcion 5." << endl;
+                cout << "Se selecciono la Opcion 5." << endl;
                 break;
             case 6:
                 cout << "Saliendo del programa..." << endl;
@@ -142,194 +143,7 @@ void readJsonAvion(const string& filepath) {
     file.close();  // Se cierra el archivo después de leerlo
 }
 
-void readJsonPasajeros(const string& filepath) {
-    // Se abre el archivo JSON
-    ifstream file(filepath);
-    if (!file.is_open()) {
-        cout << "Could not open the file." << endl;
-        return;
-    }
 
-    try {
-        // Parseo del archivo JSON
-        json jsonData;
-        file >> jsonData;
-
-        // Access the data
-        for (const auto& item : jsonData) {
-            cout << "Nombre: " << item.value("nombre", "N/A") << endl;
-            cout << "Nacionalidad: " << item.value("nacionalidad", "N/A") << endl;
-            cout << "Numero de Pasaporte: " << item.value("numero_de_pasaporte", "N/A") << endl;
-            cout << "Vuelo: " << item.value("vuelo", "N/A") << endl; // Changed from number to string
-            cout << "Asiento: " << item.value("asiento", 0) << endl;
-            cout << "Destino: " << item.value("destino", "N/A") << endl; // Changed from number to string
-            cout << "Origen: " << item.value("origen", "N/A") << endl;
-            cout << "Equipaje Facturado: " << item.value("equipaje_facturado", 0) << endl;
-            cout << "----------" << endl;
-        }
-
-    } catch (const json::exception& e) {
-        cout << "Error parsing the JSON file: " << e.what() << endl;
-    }
-
-    file.close();  // Cierra el archivo después de leerlo
-}
-
-
-
-
-void readmovimientos(){
-    ifstream file("movimientos.txt");
-    string line;
-
-
-    if (file.is_open()) {
-        cout << "\nMovimientos realizados:" << endl;
-        while (getline(file, line)) {
-            if (line == "IngresoEquipajes;") {
-                // El primer pasajero de la cola agregarlo a la pila y la listaEquipaje y equipajePasajeros
-                Passenger pasajero = ColaPasajeros.dequeue();
-                // verificar si el pasajero contiene el atributo equipaje_facturado
-                if (pasajero.getEquipajeFacturado() > 0) {
-                    EquipajePasajeros.push(pasajero);
-                    ListaEquipajeFacturado.insertAtBeginning(pasajero);
-                    
-                    
-                    cout << "El pasajero " << pasajero.getNombre() << " con número de pasaporte " << pasajero.getNumeroDePasaporte() << " tiene equipaje." << endl;
-                } else if (pasajero.getEquipajeFacturado() == 0){
-                    ListaEquipajeFacturado.insertAtBeginning(pasajero);
-                    
-                    cout << "El pasajero " << pasajero.getNombre() << " con número de pasaporte " << pasajero.getNumeroDePasaporte() << " no tiene equipaje." << endl;
-                }
-            } else if (line.find("MantenimientoAviones,Ingreso,") == 0) {
-                string cambioEstado = "Mantenimiento";
-                // Extraer el texto después de la coma y antes del punto y coma
-                string texto = line.substr(29, line.find(";") - 29);
-                // Buscar el avión en la listaAvionesDisponible a travez del metodo buscarPorNumeroDeRegistro
-                Airplane* avion = ListaAvionesDisponibles.searchByRegistrationNumber(texto);
-                // Verificar si se encontró el avión
-                if (avion != nullptr) {
-                    // Cambiar el estado del avión a "Mantenimiento"
-                    Airplane avionMantenimiento(avion->getVuelo(), avion->getNumeroDeRegistro(), avion->getModelo(),
-                    avion->getFabricante(), avion->getAnoFabricacion(), avion->getCapacidad(),
-                    avion->getPesoMaxDespegue(), avion->getAerolinea(), cambioEstado);
-                    // Agregarlo a la listaAvionesMantenimiento
-                    ListaAvionesMantenimiento.insert(avionMantenimiento);
-                    // Eliminarlo de la listaAvionesDisponible
-                    ListaAvionesDisponibles.removeByRegistrationNumber(texto);
-                    cout << "El avión con número de registro " << texto << " ha ingresado a mantenimiento." << endl;
-                } else {
-                    std::cout << "No se encontró el avión con número de registro: " << texto << std::endl;
-                }
-            } else if (line.find("MantenimientoAviones,Salida,") == 0) {
-                string cambioEstado = "Disponible";
-                // Extraer el texto después de la coma y antes del punto y coma
-                string texto = line.substr(28, line.find(";") - 28);
-                // Buscar el avión en la listaAvionesDisponible a travez del metodo buscarPorNumeroDeRegistro
-                Airplane* avion = ListaAvionesMantenimiento.searchByRegistrationNumber(texto);
-                // Verificar si se encontró el avión
-                if (avion != nullptr) {
-                    // Cambiar el estado del avión a "Mantenimiento"
-                    Airplane avionMantenimiento(avion->getVuelo(), avion->getNumeroDeRegistro(), avion->getModelo(),
-                    avion->getFabricante(), avion->getAnoFabricacion(), avion->getCapacidad(),
-                    avion->getPesoMaxDespegue(), avion->getAerolinea(), cambioEstado);
-                    // Agregarlo a la listaAvionesMantenimiento
-                    ListaAvionesDisponibles.insert(avionMantenimiento);
-                    // Eliminarlo de la listaAvionesDisponible
-                    ListaAvionesMantenimiento.removeByRegistrationNumber(texto);
-                    cout << "El avión con número de registro " << texto << " ha salido de mantenimiento." << endl;
-                } else {
-                    std::cout << "No se encontró el avión con número de registro: " << texto << std::endl;
-                }
-            } else {
-                cout << "La línea no cumple con ninguna de las condiciones" << endl;
-            }
-        }
-        cout << endl;
-        file.close();
-    } else {
-        cout << "No se pudo abrir el archivo " << endl;
-        }
-    // Verificar si el pasajero tiene el mismo numero de vuelo y si es asi ordenar por asiento
-    if (ListaEquipajeFacturado.getSize() > 1) {
-        for (int i = 0; i < ListaEquipajeFacturado.getSize() - 1; i++) {
-            Passenger pasajeroActual = ListaEquipajeFacturado.getElement(i);
-            Passenger pasajeroSiguiente = ListaEquipajeFacturado.getElement(i + 1);
-            if (pasajeroActual.getVuelo() == pasajeroSiguiente.getVuelo()) {
-            ListaEquipajeFacturado.sortBySeatNumber();
-            } else {
-                // Sort passengers by flight number
-                ListaEquipajeFacturado.sortByFlightNumber();
-            }
-        }
-}
-
-}
-
-
-
-void consultar_pasajero() {
-    cout << "Ingrese el numero de pasaporte del pasajero: ";
-    string numeroPasaporte;
-    cin >> numeroPasaporte;
-
-    try {
-        Node<Passenger> *pasajero = ListaEquipajeFacturado.search(numeroPasaporte);
-        cout << "\nInformación del pasajero: " << endl;
-        cout << "Nombre: " << pasajero->data.getNombre() << endl;
-        cout << "Nacionalidad: " << pasajero->data.getNacionalidad() << endl;
-        cout << "Numero de pasaporte: " << pasajero->data.getNumeroDePasaporte() << endl;
-        cout << "Vuelo: " << pasajero->data.getVuelo() << endl;
-        cout << "Asiento: " << pasajero->data.getAsiento() << endl;
-        cout << "Destino: " << pasajero->data.getDestino() << endl;
-        cout << "Origen: " << pasajero->data.getOrigen() << endl;
-        cout << "Equipaje facturado: " << pasajero->data.getEquipajeFacturado() << endl;
-        cout << endl;
-        
-        
-
-
-    } catch (const std::runtime_error& e) {
-        cerr << e.what() << endl;
-    }
-    
-    
-
-
-
-
-
-}
-
-
-
-
-
-
-
-int Menu() {
-    cout << "|                                                              |" << endl;
-    cout << "|                    Bienvenido al Menu Principal              |" << endl;
-    cout << "|                                                              |" << endl;
-    cout << "|-------------------------------------------------------------+" << endl;
-    cout << "|                                                              |" << endl;
-    cout << "|                      1. Carga de Aviones                     |" << endl;
-    cout << "|                      2. Carga de Pasajeros                   |" << endl;
-    cout << "|                      3. Carga de Movimientos                 |" << endl;
-    cout << "|                      4. Consulta de Pasajeros                |" << endl;
-    cout << "|                      5. Reportes                             |" << endl;
-    cout << "|                      6. Salir                                |" << endl;
-    cout << "|                                                              |" << endl;
-    cout << "|-------------------------------------------------------------+" << endl;
-    cout << "|                                                              |" << endl;
-    cout << "| Ingrese una opcion:                                          |" << endl;
-    cout << "|                                                              |" << endl;
-    cout << "+-------------------------------------------------------------+" << endl;
-    
-    int choice;
-    cin >> choice;
-    return choice;
-}
 
 string selectJsonFile(const string& directory) {
     vector<string> jsonFiles;
@@ -363,3 +177,208 @@ string selectJsonFile(const string& directory) {
 
     return jsonFiles[choice - 1];
 }
+
+void readJsonPasajeros(const string& filepath) {
+    // Se abre el archivo JSON
+    ifstream file(filepath);
+    if (!file.is_open()) {
+        cout << "Could not open the file." << endl;
+        return;
+    }
+
+    try {
+        // Parseo del archivo JSON
+        json jsonData;
+        file >> jsonData;
+
+        // Access the data
+        for (const auto& item : jsonData) {
+            cout << "Nombre: " << item.value("nombre", "N/A") << endl;
+            cout << "Nacionalidad: " << item.value("nacionalidad", "N/A") << endl;
+            cout << "Numero de Pasaporte: " << item.value("numero_de_pasaporte", "N/A") << endl;
+            cout << "Vuelo: " << item.value("vuelo", "N/A") << endl; // Changed from number to string
+            cout << "Asiento: " << item.value("asiento", 0) << endl;
+            cout << "Destino: " << item.value("destino", "N/A") << endl; // Changed from number to string
+            cout << "Origen: " << item.value("origen", "N/A") << endl;
+            cout << "Equipaje Facturado: " << item.value("equipaje_facturado", 0) << endl;
+            cout << "----------" << endl;
+            Passenger *pasajero = new Passenger(item.value("nombre", "N/A"), 
+                                            item.value("nacionalidad", "N/A"), 
+                                            item.value("numero_de_pasaporte", "N/A"), 
+                                            item.value("vuelo", "N/A"),
+                                            item.value("asiento", 0), 
+                                            item.value("destino", "N/A"),
+                                            item.value("origen", "N/A"), 
+                                            item.value("equipaje_facturado", 0));
+            ColaPasajeros.enqueue(*pasajero);
+        }
+
+    } catch (const json::exception& e) {
+        cout << "Error parsing the JSON file: " << e.what() << endl;
+    }
+
+    file.close();  // Cierra el archivo después de leerlo
+}
+
+
+
+string selectTxtFile(const string& directory) {
+    vector<string> txtFiles;
+    for (const auto& entry : fs::directory_iterator(directory)) {
+        if (entry.path().extension() == ".txt") {
+            txtFiles.push_back(entry.path().string());
+        }
+    }
+
+    if (txtFiles.empty()) {
+        cout << "No se encontraron archivos TXT en el directorio." << endl;
+        return "";
+    }
+
+    cout << "Archivos TXT disponibles:" << endl;
+    for (size_t i = 0; i < txtFiles.size(); ++i) {
+        cout << i + 1 << ". " << txtFiles[i] << endl;
+    }
+
+    int choice;
+    cout << "Seleccione un archivo (1-" << txtFiles.size() << "): ";
+    cin >> choice;
+
+    // Manejo de errores
+    if (cin.fail() || choice < 1 || choice > txtFiles.size()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Selección inválida. Inténtelo de nuevo." << endl;
+        return "";
+    }
+
+    return txtFiles[choice - 1];
+}
+void readmovimientos(){
+    ifstream file("movimientos.txt");
+    string line;
+
+
+    if (file.is_open()) {
+        cout << "\nMovimientos realizados:" << endl;
+        while (getline(file, line)) {
+            if (line == "IngresoEquipajes;") {
+                cout << "\tSe detecto Ingreso de Equipajes" << endl;
+                // El primer pasajero de la cola agregarlo a la pila y la listaEquipaje y equipajePasajeros
+                Passenger pasajero = ColaPasajeros.dequeue();
+                // verificar si el pasajero contiene el atributo equipaje_facturado
+                if (pasajero.getEquipajeFacturado() > 0) {
+                    EquipajePasajeros.push(pasajero);
+                    ListaEquipajeFacturado.insertAtBeginning(pasajero);
+                    
+                    
+                    cout << "El pasajero " << pasajero.getNombre() << " con numero de pasaporte " << pasajero.getNumeroDePasaporte() << " tiene equipaje." << endl;
+                } else if (pasajero.getEquipajeFacturado() == 0){
+                    ListaEquipajeFacturado.insertAtBeginning(pasajero);
+                    
+                    cout << "El pasajero " << pasajero.getNombre() << " con numero de pasaporte " << pasajero.getNumeroDePasaporte() << " no tiene equipaje." << endl;
+                }
+            } else if (line.find("MantenimientoAviones,Ingreso,") == 0) {
+                cout << "\tSe detecto Ingreso de aviones" << endl;
+                string cambioEstado = "Mantenimiento";
+                // Extraer el texto después de la coma y antes del punto y coma
+                string texto = line.substr(29, line.find(";") - 29);
+                // Buscar el avión en la listaAvionesDisponible a travez del metodo buscarPorNumeroDeRegistro
+                Airplane* avion = ListaAvionesDisponibles.searchByRegistrationNumber(texto);
+                // Verificar si se encontró el avión
+                if (avion != nullptr) {
+                    // Cambiar el estado del avión a "Mantenimiento"
+                    Airplane avionMantenimiento(avion->getVuelo(), avion->getNumeroDeRegistro(), avion->getModelo(),
+                    avion->getFabricante(), avion->getAnoFabricacion(), avion->getCapacidad(),
+                    avion->getPesoMaxDespegue(), avion->getAerolinea(), cambioEstado);
+                    // Agregarlo a la listaAvionesMantenimiento
+                    ListaAvionesMantenimiento.insert(avionMantenimiento);
+                    // Eliminarlo de la listaAvionesDisponible
+                    ListaAvionesDisponibles.removeByRegistrationNumber(texto);
+                    cout << "El avion con número de registro " << texto << " ha ingresado a mantenimiento." << endl;
+                } else {
+                    std::cout << "No se encontro el avión con número de registro: " << texto << std::endl;
+                }
+            } else if (line.find("MantenimientoAviones,Salida,") == 0) {
+                cout << "\tSe detecto Salida de aviones" << endl;
+                string cambioEstado = "Disponible";
+                // Extraer el texto después de la coma y antes del punto y coma
+                string texto = line.substr(28, line.find(";") - 28);
+                // Buscar el avión en la listaAvionesDisponible a travez del metodo buscarPorNumeroDeRegistro
+                Airplane* avion = ListaAvionesMantenimiento.searchByRegistrationNumber(texto);
+                // Verificar si se encontró el avión
+                if (avion != nullptr) {
+                    // Cambiar el estado del avión a "Mantenimiento"
+                    Airplane avionMantenimiento(avion->getVuelo(), avion->getNumeroDeRegistro(), avion->getModelo(),
+                    avion->getFabricante(), avion->getAnoFabricacion(), avion->getCapacidad(),
+                    avion->getPesoMaxDespegue(), avion->getAerolinea(), cambioEstado);
+                    // Agregarlo a la listaAvionesMantenimiento
+                    ListaAvionesDisponibles.insert(avionMantenimiento);
+                    // Eliminarlo de la listaAvionesDisponible
+                    ListaAvionesMantenimiento.removeByRegistrationNumber(texto);
+                    cout << "El avión con número de registro " << texto << " ha salido de mantenimiento." << endl;
+                } else {
+                    std::cout << "No se encontro el avión con número de registro: " << texto << std::endl;
+                }
+            } else {
+                cout << "La linea no cumple con ninguna de las condiciones" << endl;
+            }
+        }
+        cout << endl;
+        file.close();
+    } 
+    // Verificar si el pasajero tiene el mismo numero de vuelo y si es asi ordenar por asiento
+}
+
+void consultar_pasajero() {
+    cout << "Ingrese el numero de pasaporte del pasajero: ";
+    string numeroPasaporte;
+    cin >> numeroPasaporte;
+
+    try {
+        Node<Passenger> *pasajero = ListaEquipajeFacturado.search(numeroPasaporte);
+        cout << "\nInformacion del pasajero: " << endl;
+        if(pasajero)
+        pasajero->data.print();
+        else 
+            cout << "Pasajero es un apuntador nulo"; 
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "Error desconocido." << std::endl;
+    }
+
+}
+
+
+
+
+
+
+
+int Menu() {
+    cout << "|                                                              |" << endl;
+    cout << "|                    Bienvenido al Menu Principal              |" << endl;
+    cout << "|                                                              |" << endl;
+    cout << "|-------------------------------------------------------------+" << endl;
+    cout << "|                                                              |" << endl;
+    cout << "|                      1. Carga de Aviones                     |" << endl;
+    cout << "|                      2. Carga de Pasajeros                   |" << endl;
+    cout << "|                      3. Carga de Movimientos                 |" << endl;
+    cout << "|                      4. Consulta de Pasajeros                |" << endl;
+    cout << "|                      5. Reportes                             |" << endl;
+    cout << "|                      6. Salir                                |" << endl;
+    cout << "|                                                              |" << endl;
+    cout << "|-------------------------------------------------------------+" << endl;
+    cout << "|                                                              |" << endl;
+    cout << "| Ingrese una opcion:                                          |" << endl;
+    cout << "|                                                              |" << endl;
+    cout << "+-------------------------------------------------------------+" << endl;
+    
+    int choice;
+    cin >> choice;
+    return choice;
+}
+
+
+
