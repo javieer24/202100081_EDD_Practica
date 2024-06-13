@@ -134,7 +134,7 @@ public:
         Node<T>* current = head;
 
         do {
-            if (current->data.getRegistrationNumber() == registrationNumber) {
+            if (current->data.getNumeroDeRegistro() == registrationNumber) {
                 return &(current->data);  // Devuelve un puntero al dato buscado
             }
 
@@ -152,7 +152,7 @@ public:
         Node<T>* current = head;
 
         do {
-            if (current->data.getRegistrationNumber() == registrationNumber) {  // Se encontró el elemento
+            if (current->data.getNumeroDeRegistro() == registrationNumber) {  // Se encontró el elemento
                 if (current == head && current == tail) {
                     head = nullptr;
                     tail = nullptr;

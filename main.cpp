@@ -168,6 +168,96 @@ void readJsonPasajeros(const string& filepath) {
 
 
 
+void readmovimientos(){
+    ifstream file("movimientos.txt");
+    string line;
+
+
+    if (file.is_open()) {
+        cout << "\nMovimientos realizados:" << endl;
+        while (getline(file, line)) {
+            if (line == "IngresoEquipajes;") {
+                // El primer pasajero de la cola agregarlo a la pila y la listaEquipaje y equipajePasajeros
+                Passenger pasajero = ColaPasajeros.dequeue();
+                // verificar si el pasajero contiene el atributo equipaje_facturado
+                if (pasajero.getEquipajeFacturado() > 0) {
+                    EquipajePasajeros.push(pasajero);
+                    ListaEquipajeFacturado.insertAtBeginning(pasajero);
+                    
+                    
+                    cout << "El pasajero " << pasajero.getNombre() << " con número de pasaporte " << pasajero.getNumeroDePasaporte() << " tiene equipaje." << endl;
+                } else if (pasajero.getEquipajeFacturado() == 0){
+                    ListaEquipajeFacturado.insertAtBeginning(pasajero);
+                    
+                    cout << "El pasajero " << pasajero.getNombre() << " con número de pasaporte " << pasajero.getNumeroDePasaporte() << " no tiene equipaje." << endl;
+                }
+            } else if (line.find("MantenimientoAviones,Ingreso,") == 0) {
+                string cambioEstado = "Mantenimiento";
+                // Extraer el texto después de la coma y antes del punto y coma
+                string texto = line.substr(29, line.find(";") - 29);
+                // Buscar el avión en la listaAvionesDisponible a travez del metodo buscarPorNumeroDeRegistro
+                Airplane* avion = ListaAvionesDisponibles.searchByRegistrationNumber(texto);
+                // Verificar si se encontró el avión
+                if (avion != nullptr) {
+                    // Cambiar el estado del avión a "Mantenimiento"
+                    Airplane avionMantenimiento(avion->getVuelo(), avion->getNumeroDeRegistro(), avion->getModelo(),
+                    avion->getFabricante(), avion->getAnoFabricacion(), avion->getCapacidad(),
+                    avion->getPesoMaxDespegue(), avion->getAerolinea(), cambioEstado);
+                    // Agregarlo a la listaAvionesMantenimiento
+                    ListaAvionesMantenimiento.insert(avionMantenimiento);
+                    // Eliminarlo de la listaAvionesDisponible
+                    ListaAvionesDisponibles.removeByRegistrationNumber(texto);
+                    cout << "El avión con número de registro " << texto << " ha ingresado a mantenimiento." << endl;
+                } else {
+                    std::cout << "No se encontró el avión con número de registro: " << texto << std::endl;
+                }
+            } else if (line.find("MantenimientoAviones,Salida,") == 0) {
+                string cambioEstado = "Disponible";
+                // Extraer el texto después de la coma y antes del punto y coma
+                string texto = line.substr(28, line.find(";") - 28);
+                // Buscar el avión en la listaAvionesDisponible a travez del metodo buscarPorNumeroDeRegistro
+                Airplane* avion = ListaAvionesMantenimiento.searchByRegistrationNumber(texto);
+                // Verificar si se encontró el avión
+                if (avion != nullptr) {
+                    // Cambiar el estado del avión a "Mantenimiento"
+                    Airplane avionMantenimiento(avion->getVuelo(), avion->getNumeroDeRegistro(), avion->getModelo(),
+                    avion->getFabricante(), avion->getAnoFabricacion(), avion->getCapacidad(),
+                    avion->getPesoMaxDespegue(), avion->getAerolinea(), cambioEstado);
+                    // Agregarlo a la listaAvionesMantenimiento
+                    ListaAvionesDisponibles.insert(avionMantenimiento);
+                    // Eliminarlo de la listaAvionesDisponible
+                    ListaAvionesMantenimiento.removeByRegistrationNumber(texto);
+                    cout << "El avión con número de registro " << texto << " ha salido de mantenimiento." << endl;
+                } else {
+                    std::cout << "No se encontró el avión con número de registro: " << texto << std::endl;
+                }
+            } else {
+                cout << "La línea no cumple con ninguna de las condiciones" << endl;
+            }
+        }
+        cout << endl;
+        file.close();
+    } else {
+        cout << "No se pudo abrir el archivo " << endl;
+        }
+    // Verificar si el pasajero tiene el mismo numero de vuelo y si es asi ordenar por asiento
+    if (ListaEquipajeFacturado.getSize() > 1) {
+        for (int i = 0; i < ListaEquipajeFacturado.getSize() - 1; i++) {
+            Passenger pasajeroActual = ListaEquipajeFacturado.getElement(i);
+            Passenger pasajeroSiguiente = ListaEquipajeFacturado.getElement(i + 1);
+            if (pasajeroActual.getVuelo() == pasajeroSiguiente.getVuelo()) {
+            ListaEquipajeFacturado.sortBySeatNumber();
+            } else {
+                // Sort passengers by flight number
+                ListaEquipajeFacturado.sortByFlightNumber();
+            }
+        }
+}
+
+}
+
+
+
 
 
 
