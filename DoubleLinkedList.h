@@ -120,7 +120,7 @@ public:
     Node<T>* search(const std::string& key) const {
         Node<T>* current = head;
         while (current) {
-            if (current->data.getNumeroPasaporte() == key) {
+            if (current->data.getNumeroDePasaporte() == key) {
                 return current;
             }
             current = current->next;

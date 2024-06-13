@@ -44,6 +44,11 @@ void readJsonPasajeros(const string& filepath);
 // funcion para seleccionar un archivo JSON
 string selectJsonFile(const string& directory);
 
+void readmovimientos();
+void consultar_pasajero();
+
+
+
 int main() {
     int input; // Variable para almacenar la opcion del menu
 
@@ -60,6 +65,7 @@ int main() {
 
         switch (input) {
             case 1: {
+                cout << "Se seleccionó la Opcion 1." << endl;
                 string directory = "."; // Cambiar a la direccion deseada
                 string jsonfilepath = selectJsonFile(directory);
                 cout << "Datos cargados exitosamente" << endl;
@@ -70,6 +76,7 @@ int main() {
                 break;
             }
             case 2: {
+                cout << "Se seleccionó la Opcion 2." << endl;
                 string directory = "."; // Cambiar a la direccion deseada
                 string jsonfilepath = selectJsonFile(directory);
                     cout << "Datos cargados exitosamente" << endl;
@@ -81,13 +88,16 @@ int main() {
                 break;
             }
             case 3:
-                cout << "Se seleccionó la Opción 3." << endl;
+                cout << "Se seleccionó la Opcion 3." << endl;
+                readmovimientos();
+
                 break;
             case 4:
-                cout << "Se seleccionó la Opción 4." << endl;
+                cout << "Se selecciono la Opcion 4." << endl;
+                consultar_pasajero();   
                 break;
             case 5:
-                cout << "Se seleccionó la Opción 5." << endl;
+                cout << "Se seleccionó la Opcion 5." << endl;
                 break;
             case 6:
                 cout << "Saliendo del programa..." << endl;
@@ -256,6 +266,40 @@ void readmovimientos(){
 
 }
 
+
+
+void consultar_pasajero() {
+    cout << "Ingrese el numero de pasaporte del pasajero: ";
+    string numeroPasaporte;
+    cin >> numeroPasaporte;
+
+    try {
+        Node<Passenger> *pasajero = ListaEquipajeFacturado.search(numeroPasaporte);
+        cout << "\nInformación del pasajero: " << endl;
+        cout << "Nombre: " << pasajero->data.getNombre() << endl;
+        cout << "Nacionalidad: " << pasajero->data.getNacionalidad() << endl;
+        cout << "Numero de pasaporte: " << pasajero->data.getNumeroDePasaporte() << endl;
+        cout << "Vuelo: " << pasajero->data.getVuelo() << endl;
+        cout << "Asiento: " << pasajero->data.getAsiento() << endl;
+        cout << "Destino: " << pasajero->data.getDestino() << endl;
+        cout << "Origen: " << pasajero->data.getOrigen() << endl;
+        cout << "Equipaje facturado: " << pasajero->data.getEquipajeFacturado() << endl;
+        cout << endl;
+        
+        
+
+
+    } catch (const std::runtime_error& e) {
+        cerr << e.what() << endl;
+    }
+    
+    
+
+
+
+
+
+}
 
 
 
