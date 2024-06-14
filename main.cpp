@@ -353,9 +353,6 @@ void consultar_pasajero() {
 
 
 
-
-
-
 int Menu() {
     cout << "|                                                              |" << endl;
     cout << "|                    Bienvenido al Menu Principal              |" << endl;
