@@ -1,0 +1,7 @@
+digraph PasajerosPila {
+    label="Pasajeros en Pila";
+    labelloc="t";
+    fontsize=24;
+    node [shape=ellipse, style=filled, color=lightyellow, fontname="Helvetica,Arial,sans-serif"];
+    A12345678 [label="A12345678\nJohn Doe\nEstados Unidos\nA100\n10\nNew York\nLos Angeles\n2"];
+}

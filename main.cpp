@@ -40,9 +40,9 @@ void consultar_pasajero();
 // Funciones Graphviz
 void graphAvionesDisponibles();
 void graphAvionesMantenimiento();
-
-
-
+void graphPasajerosPila();
+void graphPasajerosCola();
+void graphlistarPasajeros();
 
 
 
@@ -97,6 +97,9 @@ int main() {
                 cout << "Se selecciono la Opcion 5." << endl;
                 graphAvionesDisponibles();
                 graphAvionesMantenimiento();
+                graphPasajerosPila();
+                graphPasajerosCola();
+                graphlistarPasajeros();
                 break;
             case 6:
                 cout << "Saliendo del programa..." << endl;
@@ -358,39 +361,162 @@ void consultar_pasajero() {
     }
 
 }
-
-
-void graphAvionesDisponibles(){
+void graphAvionesDisponibles() {
     ofstream file("aviones_disponibles.dot");
     file << "digraph AvionesDisponibles {" << endl;
-    // Recorre la lista de aviones disponibles y los imprime en el archivo .dot utiliza un for para recorrer la lista, agrega todos los atributos
+    file << "    label=\"Aviones Disponibles\";" << endl;
+    file << "    labelloc=\"t\";" << endl;
+    file << "    fontsize=24;" << endl;
+    file << "    node [shape=box, style=filled, color=lightblue, fontname=\"Helvetica,Arial,sans-serif\"];" << endl;
+    
     for (int i = 0; i < ListaAvionesDisponibles.getSize(); i++) {
         Airplane avion = ListaAvionesDisponibles.getElement(i);
-        file << "    " << avion.getNumeroDeRegistro() << " [label=\"" << avion. getNumeroDeRegistro() << "\\n" << avion.getModelo() << "\\n" << avion.getFabricante() << "\\n" << avion.getAnoFabricacion() << "\\n" << avion.getCapacidad() << "\\n" << avion.getPesoMaxDespegue() << "\\n" << avion.getAerolinea() << "\"];" << endl;
+        file << "    " << avion.getNumeroDeRegistro() 
+             << " [label=\"" << avion.getNumeroDeRegistro() << "\\n" 
+             << avion.getModelo() << "\\n" 
+             << avion.getFabricante() << "\\n" 
+             << avion.getAnoFabricacion() << "\\n" 
+             << avion.getCapacidad() << "\\n" 
+             << avion.getPesoMaxDespegue() << "\\n" 
+             << avion.getAerolinea() << "\"];" << endl;
     }
+
     file << "}" << endl;
     file.close();
 
-    // Genera la imagen utilizando Graphviz
     if (system("dot -Tpng aviones_disponibles.dot -o aviones_disponibles.png") != 0) {
         cerr << "Error al ejecutar el comando Graphviz" << endl;
-        std::exit(EXIT_FAILURE); // Termina el programa si el comando falla
+        exit(EXIT_FAILURE);
     }
+
+    system("aviones_disponibles.png");
 }
 
-void graphAvionesMantenimiento(){
+void graphAvionesMantenimiento() {
     ofstream file("aviones_mantenimiento.dot");
     file << "digraph AvionesMantenimiento {" << endl;
-    // Recorre la lista de aviones en mantenimiento y los imprime en el archivo .dot utiliza un for para recorrer la lista, agrega todos los atributos
+    file << "    label=\"Aviones en Mantenimiento\";" << endl;
+    file << "    labelloc=\"t\";" << endl;
+    file << "    fontsize=24;" << endl;
+    file << "    node [shape=box, style=filled, color=lightcoral, fontname=\"Helvetica,Arial,sans-serif\"];" << endl;
+
     for (int i = 0; i < ListaAvionesMantenimiento.getSize(); i++) {
         Airplane avion = ListaAvionesMantenimiento.getElement(i);
-        file << "    " << avion.getNumeroDeRegistro() << " [label=\"" << avion.getNumeroDeRegistro() << "\\n" << avion.getModelo() << "\\n" << avion.getFabricante() << "\\n" << avion.getAnoFabricacion() << "\\n" << avion.getCapacidad() << "\\n" << avion.getPesoMaxDespegue() << "\\n" << avion.getAerolinea() << "\"];" << endl;
+        file << "    " << avion.getNumeroDeRegistro() 
+             << " [label=\"" << avion.getNumeroDeRegistro() << "\\n" 
+             << avion.getModelo() << "\\n" 
+             << avion.getFabricante() << "\\n" 
+             << avion.getAnoFabricacion() << "\\n" 
+             << avion.getCapacidad() << "\\n" 
+             << avion.getPesoMaxDespegue() << "\\n" 
+             << avion.getAerolinea() << "\"];" << endl;
     }
+
     file << "}" << endl;
     file.close();
 
-    // Genera la imagen utilizando Graphviz
-    system("dot -Tpng aviones_mantenimiento.dot -o aviones_mantenimiento.png");
+    if (system("dot -Tpng aviones_mantenimiento.dot -o aviones_mantenimiento.png") != 0) {
+        cerr << "Error al ejecutar el comando Graphviz" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    system("aviones_mantenimiento.png");
+}
+
+void graphPasajerosPila() {
+    ofstream file("pasajeros_pila.dot");
+    file << "digraph PasajerosPila {" << endl;
+    file << "    label=\"Pasajeros en Pila\";" << endl;
+    file << "    labelloc=\"t\";" << endl;
+    file << "    fontsize=24;" << endl;
+    file << "    node [shape=ellipse, style=filled, color=lightyellow, fontname=\"Helvetica,Arial,sans-serif\"];" << endl;
+
+    for (int i = 0; i < ListaEquipajeFacturado.getSize(); i++) {
+        Passenger pasajero = ListaEquipajeFacturado.getElement(i);
+        file << "    " << pasajero.getNumeroDePasaporte() 
+             << " [label=\"" << pasajero.getNumeroDePasaporte() << "\\n" 
+             << pasajero.getNombre() << "\\n" 
+             << pasajero.getNacionalidad() << "\\n" 
+             << pasajero.getVuelo() << "\\n" 
+             << pasajero.getAsiento() << "\\n" 
+             << pasajero.getDestino() << "\\n" 
+             << pasajero.getOrigen() << "\\n" 
+             << pasajero.getEquipajeFacturado() << "\"];" << endl;
+    }
+
+    file << "}" << endl;
+    file.close();
+
+    if (system("dot -Tpng pasajeros_pila.dot -o pasajeros_pila.png") != 0) {
+        cerr << "Error al ejecutar el comando Graphviz" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    system("pasajeros_pila.png");
+}
+
+void graphPasajerosCola() {
+    ofstream file("pasajeros_cola.dot");
+    file << "digraph PasajerosCola {" << endl;
+    file << "    label=\"Pasajeros en Cola\";" << endl;
+    file << "    labelloc=\"t\";" << endl;
+    file << "    fontsize=24;" << endl;
+    file << "    node [shape=ellipse, style=filled, color=lightgreen, fontname=\"Helvetica,Arial,sans-serif\"];" << endl;
+
+    for (int i = 0; i < ColaPasajeros.getSize(); i++) {
+        Passenger pasajero = ColaPasajeros.getElement(i);
+        file << "    " << pasajero.getNumeroDePasaporte() 
+             << " [label=\"" << pasajero.getNumeroDePasaporte() << "\\n" 
+             << pasajero.getNombre() << "\\n" 
+             << pasajero.getNacionalidad() << "\\n" 
+             << pasajero.getVuelo() << "\\n" 
+             << pasajero.getAsiento() << "\\n" 
+             << pasajero.getDestino() << "\\n" 
+             << pasajero.getOrigen() << "\\n" 
+             << pasajero.getEquipajeFacturado() << "\"];" << endl;
+    }
+
+    file << "}" << endl;
+    file.close();
+
+    if (system("dot -Tpng pasajeros_cola.dot -o pasajeros_cola.png") != 0) {
+        cerr << "Error al ejecutar el comando Graphviz" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    system("pasajeros_cola.png");
+}
+
+void graphlistarPasajeros() {
+    ofstream file("pasajeros_lista.dot");
+    file << "digraph PasajerosLista {" << endl;
+    file << "    label=\"Lista de Pasajeros\";" << endl;
+    file << "    labelloc=\"t\";" << endl;
+    file << "    fontsize=24;" << endl;
+    file << "    node [shape=ellipse, style=filled, color=lightgray, fontname=\"Helvetica,Arial,sans-serif\"];" << endl;
+
+    for (int i = 0; i < ListaEquipajeFacturado.getSize(); i++) {
+        Passenger pasajero = ListaEquipajeFacturado.getElement(i);
+        file << "    " << pasajero.getNumeroDePasaporte() 
+             << " [label=\"" << pasajero.getNumeroDePasaporte() << "\\n" 
+             << pasajero.getNombre() << "\\n" 
+             << pasajero.getNacionalidad() << "\\n" 
+             << pasajero.getVuelo() << "\\n" 
+             << pasajero.getAsiento() << "\\n" 
+             << pasajero.getDestino() << "\\n" 
+             << pasajero.getOrigen() << "\\n" 
+             << pasajero.getEquipajeFacturado() << "\"];" << endl;
+    }
+
+    file << "}" << endl;
+    file.close();
+
+    if (system("dot -Tpng pasajeros_lista.dot -o pasajeros_lista.png") != 0) {
+        cerr << "Error al ejecutar el comando Graphviz" << endl;
+        exit(EXIT_FAILURE);
+    }
+    system("dot -Tpng pasajeros_lista.dot -o pasajeros_lista.png");
+    system("pasajeros_lista.png");
 }
 
 

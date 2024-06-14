@@ -1,7 +1,26 @@
 digraph AvionesDisponibles {
-    N54321 [label="N54321\nAirbus A320\nAirbus\n2018\n150\n77000\nAirlineY"];
-    N67890 [label="N67890\nBoeing 787\nBoeing\n2020\n242\n254000\nAirlineZ"];
-    N13579 [label="N13579\nBoeing 777\nBoeing\n2012\n396\n351000\nAirlineX"];
-    N24680 [label="N24680\nAirbus A380\nAirbus\n2010\n853\n560000\nAirlineW"];
-    N13579 [label="N13579\nBoeing 777\nBoeing\n2012\n396\n351000\nAirlineX"];
+    label="Aviones Disponibles";
+    labelloc="t";
+    fontsize=24;
+    node [shape=box, style=filled, color=lightblue, fontname="Helvetica,Arial,sans-serif"];
+    N12345 [label="N12345\nBoeing 737\nBoeing\n2015\n180\n79000\nAirlinex"];
+    A54321 [label="A54321\nAirbus A320\nAirbus\n2018\n150\n77000\nAirlinex"];
+    N67890 [label="N67890\nBoeing 747\nBoeing\n2010\n366\n87500\nAirlinex"];
+    A67891 [label="A67891\nAirbus A380\nAirbus\n2012\n525\n120000\nAirlinex"];
+    N78901 [label="N78901\nBoeing 777\nBoeing\n2013\n396\n90000\nAirlinex"];
+    A78902 [label="A78902\nAirbus A350\nAirbus\n2015\n315\n87500\nAirlinex"];
+    N89012 [label="N89012\nBoeing 787\nBoeing\n2016\n242\n73500\nAirlinex"];
+    A89013 [label="A89013\nAirbus A321\nAirbus\n2017\n185\n83000\nAirlinex"];
+    N90123 [label="N90123\nBoeing 757\nBoeing\n2014\n239\n70500\nAirlinex"];
+    A90124 [label="A90124\nAirbus A330\nAirbus\n2019\n295\n85000\nAirlinex"];
+    N01234 [label="N01234\nBoeing 767\nBoeing\n2011\n261\n78000\nAirlinex"];
+    A01235 [label="A01235\nAirbus A340\nAirbus\n2013\n303\n82000\nAirlinex"];
+    N12356 [label="N12356\nBoeing 727\nBoeing\n2009\n149\n64000\nAirlinex"];
+    A12357 [label="A12357\nAirbus A220\nAirbus\n2018\n130\n61000\nAirlinex"];
+    N23467 [label="N23467\nBoeing 737 Max\nBoeing\n2020\n178\n80000\nAirlinex"];
+    A23468 [label="A23468\nAirbus A310\nAirbus\n2012\n280\n84000\nAirlinex"];
+    N34578 [label="N34578\nBoeing 747-8\nBoeing\n2016\n410\n90000\nAirlinex"];
+    A34579 [label="A34579\nAirbus A350-1000\nAirbus\n2019\n366\n105000\nAirlinex"];
+    N45689 [label="N45689\nBoeing 787-9\nBoeing\n2017\n296\n77000\nAirlinex"];
+    A45690 [label="A45690\nAirbus A321neo\nAirbus\n2021\n240\n88000\nAirlinex"];
 }

@@ -1,0 +1,25 @@
+digraph PasajerosCola {
+    label="Pasajeros en Cola";
+    labelloc="t";
+    fontsize=24;
+    node [shape=ellipse, style=filled, color=lightgreen, fontname="Helvetica,Arial,sans-serif"];
+    B98765432 [label="B98765432\nJane Smith\nReino Unido\nA200\n1\nLondres\nParis\n0"];
+    C23456789 [label="C23456789\nCarlos Martinez\nMéxico\nA100\n1\nMadrid\nCiudad de México\n2"];
+    D34567890 [label="D34567890\nMaria Garcia\nEspaña\nA200\n2\nBarcelona\nLisboa\n1"];
+    E45678901 [label="E45678901\nJames Brown\nEstados Unidos\nA100\n3\nChicago\nMiami\n0"];
+    F56789012 [label="F56789012\nAnna Wilson\nCanadá\nA100\n5\nToronto\nVancouver\n1"];
+    G67890123 [label="G67890123\nLi Wei\nChina\nA700\n4\nBeijing\nShanghai\n2"];
+    H78901234 [label="H78901234\nOlga Ivanova\nRusia\nA200\n3\nMoscú\nSan Petersburgo\n3"];
+    I89012345 [label="I89012345\nAhmed Ali\nEgipto\nA100\n6\nEl Cairo\nAlejandría\n1"];
+    J90123456 [label="J90123456\nSophia Müller\nAlemania\nA700\n3\nBerlín\nMúnich\n2"];
+    K01234567 [label="K01234567\nLucas Moreira\nBrasil\nA100\n20\nRío de Janeiro\nSão Paulo\n3"];
+    L12345678 [label="L12345678\nHiroshi Tanaka\nJapón\nA200\n4\nTokio\nOsaka\n1"];
+    M23456789 [label="M23456789\nEmma Svensson\nSuecia\nA100\n2\nEstocolmo\nGotemburgo\n2"];
+    N34567890 [label="N34567890\nPablo Fernandez\nArgentina\nA700\n2\nBuenos Aires\nCórdoba\n1"];
+    O45678901 [label="O45678901\nIsabella Rossi\nItalia\nA100\n8\nRoma\nMilán\n2"];
+    P56789012 [label="P56789012\nMichael Johnson\nAustralia\nA200\n5\nSídney\nMelbourne\n1"];
+    Q67890123 [label="Q67890123\nYasmine Ahmed\nEmiratos Árabes Unidos\nA100\n11\nDubái\nAbu Dabi\n3"];
+    R78901234 [label="R78901234\nNina Petrova\nUcrania\nA700\n1\nKiev\nOdesa\n2"];
+    S89012345 [label="S89012345\nJorge Santos\nPortugal\nA100\n17\nLisboa\nOporto\n1"];
+    T90123456 [label="T90123456\nHannah Cohen\nIsrael\nA200\n6\nTel Aviv\nJerusalén\n2"];
+}
