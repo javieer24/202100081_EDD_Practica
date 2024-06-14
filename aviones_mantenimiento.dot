@@ -1,0 +1,7 @@
+digraph AvionesMantenimiento {
+    N12345 [label="N12345\nBoeing 737\nBoeing\n2015\n180\n79000\nAirlineX"];
+    N54321 [label="N54321\nAirbus A320\nAirbus\n2018\n150\n77000\nAirlineY"];
+    N67890 [label="N67890\nBoeing 787\nBoeing\n2020\n242\n254000\nAirlineZ"];
+    N24680 [label="N24680\nAirbus A380\nAirbus\n2010\n853\n560000\nAirlineW"];
+    N12345 [label="N12345\nBoeing 737\nBoeing\n2015\n180\n79000\nAirlineX"];
+}

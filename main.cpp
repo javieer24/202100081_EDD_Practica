@@ -28,25 +28,21 @@ DoubleLinkedList<Passenger> ListaEquipajeFacturado;
 Queue<Passenger> ColaPasajeros;
 Stack<Passenger> EquipajePasajeros;
 
-
-
-
-
-// funcion para mostrar el menu
 int Menu();
-
-// funcion para leer el archivo JSON de aviones
 void readJsonAvion(const string& filepath);
-
-// funcion para leer el archivo JSON de pasajeros
 void readJsonPasajeros(const string& filepath);
-
-// funcion para seleccionar un archivo JSON
 string selectJsonFile(const string& directory);
 string selectTxtFile(const string& directory);
-
 void readmovimientos();
 void consultar_pasajero();
+
+
+// Funciones Graphviz
+void graphAvionesDisponibles();
+void graphAvionesMantenimiento();
+
+
+
 
 
 
@@ -99,6 +95,8 @@ int main() {
                 break;
             case 5:
                 cout << "Se selecciono la Opcion 5." << endl;
+                graphAvionesDisponibles();
+                graphAvionesMantenimiento();
                 break;
             case 6:
                 cout << "Saliendo del programa..." << endl;
@@ -134,6 +132,17 @@ void readJsonAvion(const string& filepath) {
             cout << "Aerolina: " << item.value("aerolinea", "N/A") << endl;
             cout << "Estado: " << item.value("estado", "N/A") << endl;
             cout << "----------" << endl;
+            Airplane *avion = new Airplane(item.value("vuelo", "N/A"), 
+                                            item.value("numero_de_registro", "N/A"), 
+                                            item.value("modelo", "N/A"), 
+                                            item.value("fabricante", "N/A"),
+                                            item.value("ano_fabricacion", 0), 
+                                            item.value("capacidad", 0),
+                                            item.value("peso_max_despegue", 0), 
+                                            item.value("aerolinea", "N/A"),
+                                            item.value("estado", "N/A"));
+            ListaAvionesDisponibles.insert(*avion);
+            ListaAvionesMantenimiento.insert(*avion);
         }
 
     } catch (const json::exception& e) {
@@ -351,6 +360,38 @@ void consultar_pasajero() {
 }
 
 
+void graphAvionesDisponibles(){
+    ofstream file("aviones_disponibles.dot");
+    file << "digraph AvionesDisponibles {" << endl;
+    // Recorre la lista de aviones disponibles y los imprime en el archivo .dot utiliza un for para recorrer la lista, agrega todos los atributos
+    for (int i = 0; i < ListaAvionesDisponibles.getSize(); i++) {
+        Airplane avion = ListaAvionesDisponibles.getElement(i);
+        file << "    " << avion.getNumeroDeRegistro() << " [label=\"" << avion. getNumeroDeRegistro() << "\\n" << avion.getModelo() << "\\n" << avion.getFabricante() << "\\n" << avion.getAnoFabricacion() << "\\n" << avion.getCapacidad() << "\\n" << avion.getPesoMaxDespegue() << "\\n" << avion.getAerolinea() << "\"];" << endl;
+    }
+    file << "}" << endl;
+    file.close();
+
+    // Genera la imagen utilizando Graphviz
+    if (system("dot -Tpng aviones_disponibles.dot -o aviones_disponibles.png") != 0) {
+        cerr << "Error al ejecutar el comando Graphviz" << endl;
+        std::exit(EXIT_FAILURE); // Termina el programa si el comando falla
+    }
+}
+
+void graphAvionesMantenimiento(){
+    ofstream file("aviones_mantenimiento.dot");
+    file << "digraph AvionesMantenimiento {" << endl;
+    // Recorre la lista de aviones en mantenimiento y los imprime en el archivo .dot utiliza un for para recorrer la lista, agrega todos los atributos
+    for (int i = 0; i < ListaAvionesMantenimiento.getSize(); i++) {
+        Airplane avion = ListaAvionesMantenimiento.getElement(i);
+        file << "    " << avion.getNumeroDeRegistro() << " [label=\"" << avion.getNumeroDeRegistro() << "\\n" << avion.getModelo() << "\\n" << avion.getFabricante() << "\\n" << avion.getAnoFabricacion() << "\\n" << avion.getCapacidad() << "\\n" << avion.getPesoMaxDespegue() << "\\n" << avion.getAerolinea() << "\"];" << endl;
+    }
+    file << "}" << endl;
+    file.close();
+
+    // Genera la imagen utilizando Graphviz
+    system("dot -Tpng aviones_mantenimiento.dot -o aviones_mantenimiento.png");
+}
 
 
 int Menu() {
